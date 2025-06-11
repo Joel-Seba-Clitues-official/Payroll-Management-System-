@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Joel-Seba-Clitues-official/Payroll-Management-System-.git'
+                git branch: 'main', url: 'https://github.com/Joel-Seba-Clitues-official/Payroll-Management-System-.git'
             }
         }
 
