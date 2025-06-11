@@ -2,18 +2,14 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.1'   // Name must match the one you configured
-        jdk 'JDK 11'          // Match with your JDK configuration name
-    }
-
-    environment {
-        MAVEN_OPTS = "-Dmaven.test.failure.ignore=true"
+        maven 'maven'   // match exactly the Maven name from Jenkins config
+        jdk 'java'      // match exactly the JDK name from Jenkins config
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Duisternis/Payroll-Management-System.git'
+                git 'https://github.com/Joel-Seba-Clitues-official/Payroll-Management-System-.git'
             }
         }
 
