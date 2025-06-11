@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Optional: Uncomment if you're building Java code
-        // maven 'maven'
-        // jdk 'java'
-    }
-
     stages {
         stage('Checkout') {
             steps {
