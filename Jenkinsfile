@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'maven'   // match exactly the Maven name from Jenkins config
-        jdk 'java'      // match exactly the JDK name from Jenkins config
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -13,28 +8,29 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                sh 'mvn clean install'
+                sh 'docker build -t payroll-app .'
             }
         }
 
-        stage('Test') {
+        stage('Deploy with Docker') {
             steps {
-                sh 'mvn test'
-            }
-        }
-
-        stage('Archive Artifacts') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                sh '''
+                    docker stop payroll-container || true
+                    docker rm payroll-container || true
+                    docker run -d -p 8000:8000 --name payroll-container payroll-app
+                '''
             }
         }
     }
 
     post {
-        always {
-            junit 'target/surefire-reports/*.xml'
+        success {
+            echo ' Deployment successful! Visit http://<your-server-ip>:8000'
+        }
+        failure {
+            echo ' Deployment failed. Check the logs above.'
         }
     }
 }
