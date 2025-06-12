@@ -19,6 +19,35 @@
 
 
 
+# # Use a base image with GUI and VNC support
+# FROM dorowu/ubuntu-desktop-lxde-vnc
+
+# # Avoid Chrome repo errors
+# RUN rm -f /etc/apt/sources.list.d/google-chrome.list
+
+# # Set environment variable to avoid interactive prompts
+# ENV DEBIAN_FRONTEND=noninteractive
+
+# # Install Python and required packages
+# RUN apt-get update && \
+#     apt-get install -y python3 python3-pip python3-tk && \
+#     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# # Set the working directory
+# WORKDIR /app
+
+# # Copy app code and requirements
+# COPY . /app
+# COPY requirements.txt /app/
+
+# # Install Python dependencies
+# RUN pip3 install --no-cache-dir -r requirements.txt
+
+# # Run the Python Tkinter app
+# CMD ["python3", "main.py"]
+
+
+
 # Use a base image with GUI and VNC support
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
@@ -33,16 +62,19 @@ RUN apt-get update && \
     apt-get install -y python3 python3-pip python3-tk && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy app code and requirements
+# Copy project files
 COPY . /app
-COPY requirements.txt /app/
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Run the Python Tkinter app
-CMD ["python3", "main.py"]
+# Copy and enable the GUI startup script
+COPY startup.sh /startup.sh
+RUN chmod +x /startup.sh
+
+# Run the app inside the VNC session
+CMD ["/startup.sh"]
 
