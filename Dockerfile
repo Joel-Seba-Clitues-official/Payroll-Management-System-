@@ -21,24 +21,21 @@
 
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
-# Prevent GUI prompts during install
+# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Python 3, pip, and Tkinter
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip python3-tk
+# Fix GPG error + install Python, pip, tkinter
+RUN rm /etc/apt/sources.list.d/google-chrome.list || true && \
+    apt-get update && \
+    apt-get install -y python3 python3-pip python3-tk && \
+    pip3 install -r requirements.txt
 
-# Set working directory inside container
+# Set working directory
 WORKDIR /app
 
-# Copy all project files, including requirements.txt
+# Copy all files into container
 COPY . /app
 
-# Install all dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-# Make sure main.py is executable (optional)
-RUN chmod +x main.py
-
-# Run the Tkinter app when the container starts
+# Run your Tkinter app
 CMD ["python3", "main.py"]
+
