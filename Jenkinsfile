@@ -56,12 +56,12 @@ pipeline {
             }
         }
 
-        stage('Deploy GUI Container') {
+        stage('Run Docker Container') {
             steps {
                 sh '''
-                    docker stop payroll-container || true
-                    docker rm payroll-container || true
-                    docker run -d -p 8080:80 -p 5900:5900 --name payroll-container payroll-app
+                docker stop payroll-container || true
+                docker rm payroll-container || true
+                docker run -d -p 6080:6080 --name payroll-container payroll-app
                 '''
             }
         }
@@ -69,12 +69,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ GUI App is running!'
-            echo '🔗 Access the app in your browser via VNC at: http://<YOUR-IP>:8080'
+            echo '✅ Deployment successful! Access the app at http://<JENKINS-SERVER-IP>:6080'
         }
         failure {
-            echo '❌ Deployment failed. Check console logs.'
+            echo '❌ Deployment failed. Check the logs.'
         }
     }
 }
-
