@@ -19,25 +19,30 @@
 
 
 
-# Use an Ubuntu LXDE desktop with VNC server pre-installed
+# Use a base image with GUI and VNC support
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
+# Avoid Chrome repo errors
+RUN rm -f /etc/apt/sources.list.d/google-chrome.list
+
+# Set environment variable to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Python3, pip, tkinter, mysql connector dependencies
+# Install Python and required packages
 RUN apt-get update && \
     apt-get install -y python3 python3-pip python3-tk && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy requirements and install Python dependencies
+# Copy app code and requirements
+COPY . /app
 COPY requirements.txt /app/
+
+# Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copy your main Python app code
-COPY main.py /app/
-
-# Run the Tkinter app after VNC desktop starts
+# Run the Python Tkinter app
 CMD ["python3", "main.py"]
+
