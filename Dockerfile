@@ -19,23 +19,25 @@
 
 
 
+# Use an Ubuntu LXDE desktop with VNC server pre-installed
 FROM dorowu/ubuntu-desktop-lxde-vnc
 
-# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Fix GPG error + install Python, pip, tkinter
-RUN rm /etc/apt/sources.list.d/google-chrome.list || true && \
-    apt-get update && \
+# Install Python3, pip, tkinter, mysql connector dependencies
+RUN apt-get update && \
     apt-get install -y python3 python3-pip python3-tk && \
-    pip3 install -r requirements.txt
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy all files into container
-COPY . /app
+# Copy requirements and install Python dependencies
+COPY requirements.txt /app/
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Run your Tkinter app
+# Copy your main Python app code
+COPY main.py /app/
+
+# Run the Tkinter app after VNC desktop starts
 CMD ["python3", "main.py"]
-
